@@ -43,3 +43,32 @@ test('only a deliberate long forward push enables sprint and paused inputs are i
   const {input,event,state}=setup();input.down(event(1,80,600));input.motion(event(1,80,597));assert.equal(input.y,0);assert.equal(input.sprint,false);
   input.motion(event(1,80,500));assert.equal(input.sprint,true);input.reset();state.active=false;input.down(event(2,330,620,'touch-fire'));assert.equal(input.fire,false);assert.equal(input.pointers.size,0);
 });
+function activationButton(){
+  const listeners=new Map();
+  return {addEventListener(type,fn){if(!listeners.has(type))listeners.set(type,[]);listeners.get(type).push(fn);},removeEventListener(type,fn){listeners.set(type,(listeners.get(type)||[]).filter(x=>x!==fn));},emit(type,event={}){for(const fn of listeners.get(type)||[])fn(event);}};
+}
+test('a touch press wins over a click incorrectly labeled as mouse',()=>{
+  const button=activationButton(),activations=[];
+  TouchInput.bindActivation(button,(_,touch)=>activations.push(touch),()=>false);
+  button.emit('pointerdown',{pointerType:'touch'});button.emit('click',{pointerType:'mouse'});
+  assert.deepEqual(activations,[true]);
+});
+test('legacy touchstart identifies mobile input without PointerEvent click metadata',()=>{
+  const button=activationButton(),activations=[];
+  TouchInput.bindActivation(button,(_,touch)=>activations.push(touch),()=>false);
+  button.emit('touchstart');button.emit('click',{pointerType:'mouse'});
+  assert.deepEqual(activations,[true]);
+});
+test('a mouse on a touch-capable computer still selects keyboard and mouse controls',()=>{
+  const button=activationButton(),activations=[];
+  TouchInput.bindActivation(button,(_,touch)=>activations.push(touch),()=>true);
+  button.emit('pointerdown',{pointerType:'mouse'});button.emit('click',{pointerType:'mouse'});
+  assert.deepEqual(activations,[false]);
+});
+test('cancelled gestures and keyboard activation do not retain stale touch identity',()=>{
+  const button=activationButton(),activations=[];
+  const dispose=TouchInput.bindActivation(button,(_,touch)=>activations.push(touch),()=>false);
+  button.emit('touchstart');button.emit('touchcancel');button.emit('click',{});
+  button.emit('pointerdown',{pointerType:'touch'});button.emit('keydown');button.emit('click',{});
+  assert.deepEqual(activations,[false,false]);dispose();button.emit('click',{});assert.equal(activations.length,2);
+});

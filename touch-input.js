@@ -6,6 +6,30 @@
   'use strict';
   const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
   class TouchInput {
+    static bindActivation(button, action, coarsePointer) {
+      let pressedWith = null;
+      const remember = event => { pressedWith = event.pointerType || null; };
+      const rememberTouch = () => { pressedWith = 'touch'; };
+      const clear = () => { pressedWith = null; };
+      const activate = event => {
+        // Compatibility clicks can say "mouse" after a real finger press.
+        // Prefer the initiating press, preserving actual mouse use on hybrid PCs.
+        const source = pressedWith || (event.sourceCapabilities?.firesTouchEvents ? 'touch' : event.pointerType);
+        const touch = source ? source === 'touch' : coarsePointer();
+        clear(); action(event, touch);
+      };
+      button.addEventListener('pointerdown', remember);
+      button.addEventListener('touchstart', rememberTouch, { passive: true });
+      button.addEventListener('pointercancel', clear);
+      button.addEventListener('touchcancel', clear);
+      button.addEventListener('keydown', clear);
+      button.addEventListener('click', activate);
+      return () => {
+        button.removeEventListener('pointerdown', remember); button.removeEventListener('touchstart', rememberTouch);
+        button.removeEventListener('pointercancel', clear); button.removeEventListener('touchcancel', clear);
+        button.removeEventListener('keydown', clear); button.removeEventListener('click', activate);
+      };
+    }
     constructor(surface, stick, thumb, options) {
       this.surface = surface; this.stick = stick; this.thumb = thumb; this.options = options;
       this.pointers = new Map(); this.firePointers = new Set(); this.moveId = null; this.lookId = null;

@@ -312,9 +312,9 @@
     if(usingTouch)return;
     try{pointerPending=true;const result=canvas.requestPointerLock();if(result&&result.catch)await result.catch(()=>{});}catch{/* drag-to-look and arrow keys are available */}finally{pointerPending=false;}
   }
-  function start(event){usingTouch=event?.pointerType==='touch'||(!event?.pointerType&&matchMedia('(pointer: coarse)').matches);initAudio();game.start(hard);particles.length=0;tracers.length=0;damage=0;recoil=0;hitTime=0;muzzle=0;setPhase('playing');canvas.focus({preventScroll:true});captureMouse();processEvents();updateHUD();lastFrame=performance.now();}
+  function start(event,touchActivation){usingTouch=touchActivation;initAudio();game.start(hard);particles.length=0;tracers.length=0;damage=0;recoil=0;hitTime=0;muzzle=0;setPhase('playing');canvas.focus({preventScroll:true});captureMouse();processEvents();updateHUD();lastFrame=performance.now();}
   function pause(){if(phase!=='playing')return;game.state='paused';setPhase('paused');if(document.pointerLockElement===canvas)document.exitPointerLock();$('resume-btn').focus({preventScroll:true});}
-  function resume(){if(phase!=='paused')return;initAudio();game.state='playing';setPhase('playing');canvas.focus({preventScroll:true});captureMouse();lastFrame=performance.now();}
+  function resume(event,touchActivation=usingTouch){if(phase!=='paused')return;usingTouch=touchActivation;initAudio();game.state='playing';setPhase('playing');canvas.focus({preventScroll:true});captureMouse();lastFrame=performance.now();}
   function menu(){game.state='menu';if(document.pointerLockElement===canvas)document.exitPointerLock();game.enemies=[];game.projectiles=[];game.pickups=[];particles.length=0;tracers.length=0;$('notice').classList.remove('visible');setPhase('menu');$('start-btn').focus({preventScroll:true});}
   function finish(won){
     setPhase(won?'won':'lost');if(document.pointerLockElement===canvas)document.exitPointerLock();
@@ -329,7 +329,11 @@
     window.dispatchEvent(new CustomEvent('dustvector-results',{detail:{previous:old}}));
     tone(won?440:150,.6,'triangle',.3,won?880:55);$('retry-btn').focus({preventScroll:true});
   }
-  $('start-btn').onclick=start;$('retry-btn').onclick=start;$('pause-btn').onclick=pause;$('resume-btn').onclick=resume;$('quit-btn').onclick=menu;$('result-menu-btn').onclick=menu;
+  const coarseActivation=()=>matchMedia('(pointer: coarse)').matches;
+  window.DustvectorTouch.bindActivation($('start-btn'),start,coarseActivation);
+  window.DustvectorTouch.bindActivation($('retry-btn'),start,coarseActivation);
+  window.DustvectorTouch.bindActivation($('resume-btn'),resume,coarseActivation);
+  $('pause-btn').onclick=pause;$('quit-btn').onclick=menu;$('result-menu-btn').onclick=menu;
   function closeHelp(){setPhase('menu');$('help-btn').focus({preventScroll:true});}
   $('help-btn').onclick=()=>{setPhase('help');$('close-help-btn').focus({preventScroll:true});};$('close-help-btn').onclick=closeHelp;$('help-ready-btn').onclick=closeHelp;
   for(const [id,value]of[['normal-btn',false],['hard-btn',true]])$(id).onclick=()=>{hard=value;for(const [bid,v]of[['normal-btn',false],['hard-btn',true]]){$(bid).classList.toggle('selected',v===hard);$(bid).setAttribute('aria-pressed',String(v===hard));}};

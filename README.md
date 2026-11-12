@@ -98,3 +98,5 @@ npm test
 安装有 Chrome 或 Chromium 的环境可运行 `npm run test:browser`，用实际多点触摸事件检查五种横竖屏尺寸、双手同时操作、手指释放、暂停、旋转屏幕与模拟安全区。该检查使用桌面 Chromium 的移动模拟，不能替代实体 iPhone Safari 的真机验证。
 
 `npm run test:render` 会在桌面、手机竖屏和手机横屏中连续发射泡泡，逐帧检查背景像素、WebGL 绘制错误及 GPU 网格复用，防止枪口特效造成整片背景闪烁。
+
+`npm run test:safari-input` 在浏览器中重现“手指按下，但后续 click 被标记为 mouse”的兼容行为，验证开始后手机控件仍显示，移动、发射、继续和重试都保持触控模式。这是兼容事件模拟，不等于实体 iPhone Safari 真机验证。

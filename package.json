@@ -1,12 +1,13 @@
 {
   "name":"dustvector-fps",
-  "version":"2.0.1",
+  "version":"2.0.2",
   "private":true,
   "description":"Underwater cartoon bubble game with two-thumb mobile controls",
   "scripts":{
     "test":"node --test tests/core.test.cjs tests/touch.test.cjs",
     "test:browser":"node tests/mobile-browser.cjs",
     "test:render":"node tests/render-browser.cjs",
+    "test:safari-input":"node tests/safari-activation.cjs",
     "start":"node serve.cjs",
     "build":"python build.py"
   }
