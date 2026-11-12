@@ -57,6 +57,18 @@ npm start
 
 若账号支持从私有仓库发布 GitHub Pages，可在仓库 Settings → Pages 中将 Source 设置为 GitHub Actions，再将 Actions 仓库变量 `ENABLE_GITHUB_PAGES` 设为 `true`。未设置该变量时，工作流只测试和构建，不尝试账号套餐不支持的 Pages 部署。`dist` 也可托管到其他静态网站服务。
 
+## Vercel 公开部署
+
+源码仓库保持私有。Vercel 部署只使用 `dist` 目录中的游戏网页。
+
+```powershell
+python build.py
+npx vercel@65.14.0 login
+npx vercel@65.14.0 deploy dist --prod --project dustvector-fps --create-if-missing --yes
+```
+
+首次运行需要在浏览器中完成 Vercel 授权。部署完成后，CLI 会返回网站的生产地址。后续更新先重新构建，再运行同一条 deploy 命令；仅推送到 GitHub 会触发测试与构建，当前工作流没有配置 Vercel 自动发布。
+
 ## 素材与字体
 
 游戏场景、模型与音效由项目代码生成。Epilogue 和 JetBrains Mono 字体以 SIL Open Font License 分发，各自许可文件保存在 `fonts/` 中。`assets/` 内只收录本项目实际使用的原始设计运行时。
