@@ -214,6 +214,12 @@
   G(.29,-.42,-.12,.19,.16,.31,hex('#fff2c7'),.06);G(.1,-.4,-.62,.16,.14,.25,hex('#fff2c7'),.06);
   function upload(vertices, usage=gl.STATIC_DRAW){const b=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,b);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(vertices),usage);return {buffer:b,count:vertices.length/10};}
   const worldMesh=upload(worldVertices),gunMesh=upload(gunVertices);
+  // Keep the muzzle geometry alive between frames; deleting a bound mesh leaves
+  // vertex attributes pointing at a missing buffer for the next background pass.
+  const muzzleVertices=[];
+  ellipsoid(muzzleVertices,.23,-.2,-1.03,.105,.105,.13,hex('#e1ffff'),.6,7,5);
+  const muzzleMesh=upload(muzzleVertices);
+  const sceneAttributeLocations=['aPosition','aNormal','aColor','aGlow'].map(name=>locations[name]);
   const dynamicMesh={buffer:gl.createBuffer(),count:0};
   function bind(mesh){
     gl.bindBuffer(gl.ARRAY_BUFFER,mesh.buffer);
@@ -238,7 +244,10 @@
   }
   function render(now){
     const w=canvas.width,h=canvas.height;gl.viewport(0,0,w,h);gl.clearColor(.4,.45,.4,1);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
-    gl.disable(gl.DEPTH_TEST);gl.useProgram(skyProgram);gl.bindBuffer(gl.ARRAY_BUFFER,skyBuffer);gl.enableVertexAttribArray(skyAttr);gl.vertexAttribPointer(skyAttr,2,gl.FLOAT,false,0,0);gl.uniform2f(skySun,.54,.62);gl.drawArrays(gl.TRIANGLES,0,6);
+    gl.disable(gl.DEPTH_TEST);gl.useProgram(skyProgram);
+    // The background has a different vertex layout from scene and effect meshes.
+    for(const location of sceneAttributeLocations)if(location!==skyAttr)gl.disableVertexAttribArray(location);
+    gl.bindBuffer(gl.ARRAY_BUFFER,skyBuffer);gl.enableVertexAttribArray(skyAttr);gl.vertexAttribPointer(skyAttr,2,gl.FLOAT,false,0,0);gl.uniform2f(skySun,.54,.62);gl.drawArrays(gl.TRIANGLES,0,6);
     gl.useProgram(shader);gl.enable(gl.DEPTH_TEST);gl.depthFunc(gl.LEQUAL);gl.disable(gl.CULL_FACE);
     let eye,target;
     if(phase==='menu'||phase==='help') {eye=[18,5.4,22];target=[-3,4.8,-7];}
@@ -265,7 +274,7 @@
       const portrait=w/h<.8,weaponScale=portrait?.85:1;
       const weaponMatrix=model((portrait?-.09:.025)+sway,(portrait?-.14:-.055)-Math.abs(sway)-reloadAngle*.29,(portrait?-.38:-.12)+recoil*.17,weaponScale,weaponScale,weaponScale,reloadAngle*-.45,recoil*.22+reloadAngle*.55);
       draw(gunMesh,weaponMatrix);
-      if(muzzle>0){const m=[];ellipsoid(m,.23,-.2,-1.03,.105,.105,.13,hex('#e1ffff'),.6,7,5);const mm=upload(m,gl.STREAM_DRAW);draw(mm,weaponMatrix);gl.deleteBuffer(mm.buffer);}
+      if(muzzle>0)draw(muzzleMesh,weaponMatrix);
     }
   }
   function resize(){const width=Math.max(1,canvas.clientWidth),height=Math.max(1,canvas.clientHeight),ratio=Math.min(devicePixelRatio||1,touch?1.15:1.5,Math.sqrt((touch?1000000:1800000)/(width*height)));canvas.width=Math.round(width*ratio);canvas.height=Math.round(height*ratio);if(touch)touchInput.reset();render(visualTime);}
