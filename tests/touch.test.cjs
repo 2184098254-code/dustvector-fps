@@ -65,6 +65,12 @@ test('a mouse on a touch-capable computer still selects keyboard and mouse contr
   button.emit('pointerdown',{pointerType:'mouse'});button.emit('click',{pointerType:'mouse'});
   assert.deepEqual(activations,[false]);
 });
+test('coarse-pointer accessibility clicks use touch controls when no press event is available',()=>{
+  const button=activationButton(),activations=[];
+  TouchInput.bindActivation(button,(_,touch)=>activations.push(touch),()=>true);
+  button.emit('click',{pointerType:'mouse'});
+  assert.deepEqual(activations,[true]);
+});
 test('cancelled gestures and keyboard activation do not retain stale touch identity',()=>{
   const button=activationButton(),activations=[];
   const dispose=TouchInput.bindActivation(button,(_,touch)=>activations.push(touch),()=>false);

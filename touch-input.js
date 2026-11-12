@@ -14,8 +14,9 @@
       const activate = event => {
         // Compatibility clicks can say "mouse" after a real finger press.
         // Prefer the initiating press, preserving actual mouse use on hybrid PCs.
-        const source = pressedWith || (event.sourceCapabilities?.firesTouchEvents ? 'touch' : event.pointerType);
-        const touch = source ? source === 'touch' : coarsePointer();
+        const source = pressedWith;
+        const touch = source ? source === 'touch' :
+          event.sourceCapabilities?.firesTouchEvents || event.pointerType === 'touch' || coarsePointer();
         clear(); action(event, touch);
       };
       button.addEventListener('pointerdown', remember);
