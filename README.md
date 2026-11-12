@@ -2,6 +2,8 @@
 
 可离线运行的 HTML 第一人称射击小游戏。沙漠中继站、三波无人机、掩体、弹药补给与战绩结算。
 
+在线游玩：[https://dustvector-fps.vercel.app](https://dustvector-fps.vercel.app)
+
 ## 直接开始
 
 双击 `dustvector.html`，用 Chrome 或 Edge 打开，点击「开始行动」。这个单文件已包含游戏代码、样式、字体和交互动效，无需安装依赖，也不请求外网。
