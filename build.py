@@ -28,7 +28,7 @@ def build():
     if (ROOT / 'world-poster.jpg').exists():
         html = html.replace('src="world-poster.jpg"', 'src="' + data_url('world-poster.jpg', 'image/jpeg') + '"')
     html = html.replace('href="favicon.svg"', 'href="' + data_url('favicon.svg', 'image/svg+xml') + '"')
-    for filename in ['game-core.js', 'game.js']:
+    for filename in ['game-core.js', 'touch-input.js', 'game.js']:
         source = (ROOT / filename).read_text(encoding='utf-8').replace('</script', '<\\/script')
         html = html.replace('<script src="' + filename + '"></script>', '<script>\n' + source + '\n</script>')
     motion = (ROOT / 'assets/motion/motion.js').read_text(encoding='utf-8').replace('</script', '<\\/script')
@@ -55,7 +55,7 @@ document.documentElement.dataset.momentsReady='1';
     site.mkdir(exist_ok=True)
     write_utf8(site / 'index.html', html)
     (site / '.nojekyll').write_text('', encoding='utf-8')
-    files = ['index.html', 'game.css', 'game-core.js', 'game.js', 'game-moments.js', 'favicon.svg',
+    files = ['index.html', 'game.css', 'game-core.js', 'touch-input.js', 'game.js', 'game-moments.js', 'favicon.svg',
              'serve.cjs', 'package.json', 'build.py', 'README.md', 'VERIFICATION.md', 'PLAN.md', 'names.json', 'dustvector.html',
              'assets/system.css', 'assets/motion/motion.css', 'assets/motion/motion.js',
              'assets/moments/moments.js', 'assets/moments/lib.js',
