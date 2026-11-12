@@ -1,0 +1,11 @@
+{
+  "name":"dustvector-fps",
+  "version":"1.0.0",
+  "private":true,
+  "description":"Offline HTML first-person shooter",
+  "scripts":{
+    "test":"node --test tests/core.test.cjs",
+    "start":"node serve.cjs",
+    "build":"python build.py"
+  }
+}

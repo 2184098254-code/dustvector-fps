@@ -1,0 +1,37 @@
+# Local browser profiles, screenshots, installers and generated delivery files.
+.taste-skill/
+output/
+shots/
+dist/
+*.zip
+dustvector.html
+node_modules/
+__pycache__/
+*.pyc
+.env
+.env.*
+!.env.example
+
+# Local assistant instructions and design working notes are not project assets.
+AGENTS.md
+PLAN.md
+VERIFICATION.md
+names.json
+fonts/fonts-source.css
+tests/browser-smoke.cjs
+
+# Publish only the unchanged skill runtime actually used by this game.
+assets/*
+!assets/system.css
+!assets/motion/
+assets/motion/*
+!assets/motion/motion.css
+!assets/motion/motion.js
+!assets/moments/
+assets/moments/*
+!assets/moments/moments.js
+!assets/moments/lib.js
+!assets/moments/counter-rolls/
+assets/moments/counter-rolls/*
+!assets/moments/counter-rolls/moment.js
+!assets/moments/counter-rolls/moment.css

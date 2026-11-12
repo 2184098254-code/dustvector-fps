@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="zh-CN" data-type="software" data-radius="soft" data-ground="sand" data-buttons="block" data-motion>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>DUSTVECTOR 尘线 · 第一人称射击小游戏</title>
+  <meta name="description" content="进入沙漠中继站，用移动、射击与掩体应对三波无人机，完成一场可直接在浏览器玩的单人射击任务。">
+  <meta name="page-type" content="software">
+  <meta name="site-kind" content="gaming">
+  <meta name="theme-color" content="#0a0a0a">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="DUSTVECTOR 尘线 · 第一人称射击">
+  <meta property="og:description" content="三波无人机，一座沙漠中继站。立即开始单人任务。">
+  <meta property="og:image" content="share.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <!-- Canonical URL will be set when a public domain is supplied. -->
+  <link rel="stylesheet" href="assets/system.css">
+  <link rel="stylesheet" href="assets/motion/motion.css">
+  <link rel="stylesheet" href="game.css">
+  <script>document.documentElement.classList.add('m-enter');setTimeout(()=>document.documentElement.classList.add('m-enter-done'),700)</script>
+  <script>document.documentElement.classList.add('mo-js');setTimeout(()=>document.documentElement.classList.add('mo-safe'),2500)</script>
+</head>
+<body>
+<!-- gaming; deal: black-crimson, Epilogue / JetBrains Mono, photo hero adapted to the real game world,
+     nav-centre, footer-statement and close-type omitted in the single-screen game, space, block,
+     wordmark, sand. Moment: counter-rolls on actual result statistics. The WebGL canvas is the game,
+     not a decorative kit effect. User requested a playable HTML FPS rather than a promotional site. -->
+  <header class="nav game-nav">
+    <div class="wrap nav-inner">
+      <a class="skip-link" href="#top">跳至游戏</a>
+      <a class="wordmark" href="#top" aria-label="DUSTVECTOR 尘线首页"><span class="brand-cross" aria-hidden="true"></span>DUSTVECTOR<span class="brand-cn">尘线</span></a>
+      <div class="nav-center"><span class="status-dot"></span><span id="nav-state">单人行动</span><span class="nav-divider"></span><span class="mono">SECTOR / 07</span></div>
+      <div class="nav-tools">
+        <button class="tool-btn" id="sound-btn" aria-label="关闭声音" aria-pressed="false" title="开关声音"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5ZM15 8a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14"/></svg><span class="sound-slash"></span></button>
+        <button class="tool-btn" id="fullscreen-btn" aria-label="进入全屏" title="全屏"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5"/></svg></button>
+      </div>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero arena" id="arena" data-enter aria-label="尘线第一人称射击游戏" style="--h:1">
+      <img id="world-fallback" class="layer hero__bg" src="world-poster.jpg" alt="" aria-hidden="true" width="1440" height="900" hidden>
+      <canvas id="world" class="layer hero__bg" aria-hidden="true" tabindex="-1"></canvas>
+      <div class="damage-vignette" id="damage-vignette" aria-hidden="true"></div>
+      <div class="wrap arena-content">
+        <div id="menu" class="hero-text menu-screen">
+          <div class="hero-text menu-copy">
+            <p class="eyebrow"><span class="small-rule"></span>浏览器第一人称射击 / 单人</p>
+            <h1 id="hero-h">DUST<span>VECTOR</span><span class="sr-only">尘线 · 第一人称射击</span></h1>
+            <div class="title-cn"><span>尘 线</span><span class="title-edition mono">TACTICAL SURVIVAL</span></div>
+            <p class="hero__lead">中继站已失联。<br>利用掩体与补给，清除三波失控无人机。</p>
+            <div class="difficulty" role="group" aria-label="任务难度">
+              <span class="difficulty-label">任务难度</span>
+              <button id="normal-btn" class="level-btn selected" aria-pressed="true">标准行动</button>
+              <button id="hard-btn" class="level-btn" aria-pressed="false">高压行动</button>
+            </div>
+            <div class="btn-row menu-actions">
+              <button class="btn btn--primary start-btn" id="start-btn"><span class="play-triangle" aria-hidden="true"></span>开始行动<svg class="m-arrow" viewBox="0 0 12 12" aria-hidden="true"><path class="m-arrow__stem" d="M1 6h8"/><path class="m-arrow__head" d="m5 2 4 4-4 4"/></svg></button>
+              <button class="btn btn--secondary" id="help-btn">查看操作<span class="mono">?</span></button>
+            </div>
+            <p id="best-line" class="best-line mono">本地最高 <span id="best-score">0000</span><span class="best-separator">/</span>无需下载 · 即刻游玩</p>
+          </div>
+          <div class="mission-stamp" aria-label="任务地点，沙漠中继站">
+            <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+            <div class="stamp-top mono"><span class="status-dot"></span>信号中断</div>
+            <div class="stamp-index mono">07<span>/</span></div>
+            <p>沙漠中继站</p><span class="stamp-en mono">RELAY STATION</span>
+            <div class="stamp-bottom mono"><span>任务 / 清除无人机</span><span>03 波次</span></div>
+          </div>
+          <div class="menu-foot">
+            <div class="quick-controls"><span><kbd>W A S D</kbd> 移动</span><span><span class="mouse-glyph" aria-hidden="true"></span> 瞄准 / 射击</span><span><kbd>R</kbd> 换弹</span></div>
+          </div>
+        </div>
+
+        <div id="hud" class="hud" hidden>
+          <div class="hud-top"><div class="objective"><span class="eyebrow">当前任务</span><strong>清除区域内的无人机</strong><div class="wave-progress"><i></i><i></i><i></i></div></div><div class="wave-block"><span class="mono">WAVE</span><strong><span id="wave-value">01</span><small> / 03</small></strong><span id="remaining-value">剩余 4 架</span></div></div>
+          <div class="compass mono" id="compass">N <span>···</span> 000 <span>···</span> E</div>
+          <div class="crosshair" id="crosshair"><i></i><i></i><i></i><i></i><b></b></div>
+          <div class="hit-marker" id="hit-marker">×</div>
+          <div id="notice" class="notice" role="status" aria-live="polite"></div>
+          <div class="reload-notice" id="reload-notice" hidden><span>正在换弹</span><div><i id="reload-fill"></i></div></div>
+          <div class="hud-bottom"><div class="health-block"><div class="health-heading"><span class="health-cross">+</span><strong id="health-value">100</strong><span class="mono">HP</span></div><div class="health-track"><i id="health-fill"></i></div><span id="health-label">生命状态正常</span></div><div class="combat-hints mono"><span><kbd>SHIFT</kbd> 冲刺</span><span><kbd>R</kbd> 换弹</span><span><kbd>ESC</kbd> 暂停</span></div><div class="ammo-block"><span class="weapon-name mono">VX–24 / 突击步枪</span><div><strong id="ammo-value">24</strong><span class="ammo-slash">/</span><span id="reserve-value">120</span></div><span class="mono ammo-mode">AUTO <i></i><i></i><i></i></span></div></div>
+          <div class="score-hud mono"><span id="score-value">0000</span><small>得分</small></div>
+          <canvas id="radar" width="144" height="144" aria-label="附近敌人与掩体雷达"></canvas>
+          <button class="tool-btn pause-btn" id="pause-btn" aria-label="暂停游戏"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14M16 5v14"/></svg></button>
+        </div>
+
+        <div id="pause-screen" class="center-screen" hidden><div class="pause-content"><p class="eyebrow">任务已暂停</p><h2>信号待命</h2><p id="pause-description">准备好后，继续守住中继站。</p><button class="btn btn--primary" id="resume-btn">继续行动 <span aria-hidden="true">→</span></button><button class="btn btn--secondary" id="quit-btn">返回基地</button><p class="pause-tip">按 Esc 暂停 · 点击继续后恢复鼠标瞄准</p></div></div>
+
+        <div id="result-screen" class="center-screen" hidden><div class="result-content"><p class="eyebrow" id="result-eyebrow">任务完成 / MISSION COMPLETE</p><h2 id="result-title">中继站已肃清</h2><p id="result-description">所有无人机已清除，通信恢复。</p><div class="result-stats" id="result-stats" data-moment="counter-rolls"><div><strong class="t-stat" id="result-score">0</strong><span>行动得分</span></div><div><strong class="t-stat" id="result-kills">0</strong><span>击毁无人机</span></div><div><strong class="t-stat" id="result-accuracy">0%</strong><span>射击命中率</span></div><div><strong id="result-time">0:00</strong><span>行动用时</span></div></div><p class="result-record" id="result-record"></p><div class="btn-row"><button class="btn btn--primary" id="retry-btn">再次行动 <span aria-hidden="true">↗</span></button><button class="btn btn--secondary" id="result-menu-btn">返回基地</button></div></div></div>
+
+        <div id="help-screen" class="help-screen" hidden role="dialog" aria-modal="true" aria-labelledby="help-title"><div class="help-content"><div class="help-heading"><p class="eyebrow">行动手册 / FIELD MANUAL</p><button class="tool-btn" id="close-help-btn" aria-label="关闭操作说明">×</button></div><h2 id="help-title">操作与任务</h2><p>清除三波无人机即可完成任务。红色弹丸可以躲避，建筑与箱体可以阻挡火力。</p><dl class="control-list"><div><dt><kbd>W A S D</kbd></dt><dd>前后左右移动</dd></div><div><dt>鼠标移动</dt><dd>环视与瞄准</dd></div><div><dt>鼠标左键 / <kbd>空格</kbd></dt><dd>按住连续射击</dd></div><div><dt><kbd>R</kbd></dt><dd>重新装填弹匣</dd></div><div><dt><kbd>Shift</kbd></dt><dd>按住加速奔跑</dd></div><div><dt><kbd>Esc</kbd> / <kbd>P</kbd></dt><dd>暂停或继续行动</dd></div></dl><p class="help-supply"><span>+</span> 靠近绿色补给箱恢复生命，靠近橙色补给箱补充弹药。每波结束也会发放补给。</p><p class="help-touch">手机：左侧摇杆移动，右侧拖动瞄准，点击射击与换弹按钮。</p><button class="btn btn--primary" id="help-ready-btn">返回准备界面 <span aria-hidden="true">→</span></button></div></div>
+      </div>
+      <div class="touch-controls" id="touch-controls" hidden><div id="joystick" class="joystick" aria-label="触控移动摇杆"><div id="joystick-thumb"></div></div><div class="touch-look" id="touch-look" aria-label="拖动瞄准区域"></div><button id="touch-reload" aria-label="换弹">换弹</button><button id="touch-fire" aria-label="按住射击">射击<span>◎</span></button></div>
+      <div class="fatal-error" id="fatal-error" hidden role="alert"><h2>场景暂时无法启动</h2><p id="fatal-message">请使用支持 WebGL 的浏览器，并开启硬件加速后重新打开。</p><button class="btn btn--primary" onclick="location.reload()">重新加载游戏</button></div>
+      <noscript><div class="fatal-error"><h2>游戏需要 JavaScript</h2><p>请在浏览器中启用 JavaScript，然后重新加载页面。</p></div></noscript>
+    </section>
+  </main>
+  <script src="game-core.js"></script>
+  <script src="game.js"></script>
+  <script type="module" src="assets/motion/motion.js"></script>
+  <script type="module" src="assets/moments/moments.js"></script>
+  <script type="module" src="game-moments.js"></script>
+</body>
+</html>
