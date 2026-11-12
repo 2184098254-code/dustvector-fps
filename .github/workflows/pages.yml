@@ -1,4 +1,4 @@
-name: Test and build DUSTVECTOR
+name: Test and deploy DUSTVECTOR
 
 on:
   push:
@@ -27,7 +27,6 @@ jobs:
       - name: Build offline game and static site
         run: python3 build.py
       - name: Configure GitHub Pages
-        if: vars.ENABLE_GITHUB_PAGES == 'true'
         uses: actions/configure-pages@v5
       - name: Upload deployable game
         uses: actions/upload-artifact@v4
@@ -35,13 +34,11 @@ jobs:
           name: dustvector-site
           path: dist
       - name: Upload website
-        if: vars.ENABLE_GITHUB_PAGES == 'true'
         uses: actions/upload-pages-artifact@v4
         with:
           path: dist
 
   deploy:
-    if: vars.ENABLE_GITHUB_PAGES == 'true'
     needs: build
     runs-on: ubuntu-latest
     permissions:

@@ -2,7 +2,9 @@
 
 可离线运行的 HTML 第一人称射击小游戏。沙漠中继站、三波无人机、掩体、弹药补给与战绩结算。
 
-在线游玩：[https://dustvector-fps.vercel.app](https://dustvector-fps.vercel.app)
+在线游玩：[GitHub Pages](https://2184098254-code.github.io/dustvector-fps/)
+
+备用入口：[Vercel](https://dustvector-fps.vercel.app)
 
 ## 直接开始
 
@@ -55,13 +57,13 @@ npm start
 
 运行 `python build.py` 会生成可直接双击的 `dustvector.html`，以及用于静态托管的 `dist/index.html`。部署产物只包含游戏，不包含源码、浏览器缓存或本地输出。
 
-仓库包含 `.github/workflows/pages.yml`：推送到 `main` 后运行机制测试、构建网站，并将 `dist` 上传为 `dustvector-site` 构建产物。
+仓库已设为公开，使用 GitHub Actions 发布 Pages。`.github/workflows/pages.yml` 在推送到 `main` 后运行机制测试、构建网站，再自动发布 `dist`；同时保留 `dustvector-site` 构建产物。
 
-若账号支持从私有仓库发布 GitHub Pages，可在仓库 Settings → Pages 中将 Source 设置为 GitHub Actions，再将 Actions 仓库变量 `ENABLE_GITHUB_PAGES` 设为 `true`。未设置该变量时，工作流只测试和构建，不尝试账号套餐不支持的 Pages 部署。`dist` 也可托管到其他静态网站服务。
+仓库 Settings → Pages 的 Source 应设置为 GitHub Actions。也可以在 Actions 中手动运行发布工作流。`dist/index.html` 已内嵌运行资源，可以在项目子路径下使用。
 
 ## Vercel 公开部署
 
-源码仓库保持私有。Vercel 部署只使用 `dist` 目录中的游戏网页。
+Vercel 作为备用托管入口，部署只使用 `dist` 目录中的游戏网页。
 
 ```powershell
 python build.py
@@ -69,7 +71,7 @@ npx vercel@65.14.0 login
 npx vercel@65.14.0 deploy dist --prod --project dustvector-fps --create-if-missing --yes
 ```
 
-首次运行需要在浏览器中完成 Vercel 授权。部署完成后，CLI 会返回网站的生产地址。后续更新先重新构建，再运行同一条 deploy 命令；仅推送到 GitHub 会触发测试与构建，当前工作流没有配置 Vercel 自动发布。
+首次运行需要在浏览器中完成 Vercel 授权。部署完成后，CLI 会返回网站的生产地址。后续更新先重新构建，再运行同一条 deploy 命令；推送到 GitHub 会自动更新 Pages，当前工作流没有配置 Vercel 自动发布。
 
 ## 素材与字体
 
