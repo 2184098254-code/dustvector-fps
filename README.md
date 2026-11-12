@@ -53,7 +53,9 @@ npm start
 
 运行 `python build.py` 会生成可直接双击的 `dustvector.html`，以及用于静态托管的 `dist/index.html`。部署产物只包含游戏，不包含源码、浏览器缓存或本地输出。
 
-仓库包含 `.github/workflows/pages.yml`：推送到 `main` 后先运行机制测试，再构建并部署到 GitHub Pages。在仓库 Settings → Pages 中，将 Source 设置为 GitHub Actions。后续推送会自动更新网站。
+仓库包含 `.github/workflows/pages.yml`：推送到 `main` 后运行机制测试、构建网站，并将 `dist` 上传为 `dustvector-site` 构建产物。
+
+若账号支持从私有仓库发布 GitHub Pages，可在仓库 Settings → Pages 中将 Source 设置为 GitHub Actions，再将 Actions 仓库变量 `ENABLE_GITHUB_PAGES` 设为 `true`。未设置该变量时，工作流只测试和构建，不尝试账号套餐不支持的 Pages 部署。`dist` 也可托管到其他静态网站服务。
 
 ## 素材与字体
 
