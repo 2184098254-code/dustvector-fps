@@ -6,6 +6,11 @@ import zipfile
 
 ROOT = Path(__file__).resolve().parent
 
+def write_utf8(path, content):
+    # Keep the published HTML identical on Windows and Linux CI.
+    with path.open('w', encoding='utf-8', newline='\n') as output:
+        output.write(content)
+
 def data_url(path, mime):
     return 'data:' + mime + ';base64,' + base64.b64encode((ROOT / path).read_bytes()).decode()
 
@@ -43,12 +48,12 @@ document.documentElement.dataset.momentsReady='1';
     html = html.replace('<script type="module" src="game-moments.js"></script>', adapter)
     if (ROOT / 'share.jpg').exists():
         html = html.replace('content="share.jpg"', 'content="' + data_url('share.jpg', 'image/jpeg') + '"')
-    (ROOT / 'dustvector.html').write_text(html, encoding='utf-8')
+    write_utf8(ROOT / 'dustvector.html', html)
     # GitHub Pages serves this small, self-contained site. Source and local files
     # stay outside the deployment artifact.
     site = ROOT / 'dist'
     site.mkdir(exist_ok=True)
-    (site / 'index.html').write_text(html, encoding='utf-8')
+    write_utf8(site / 'index.html', html)
     (site / '.nojekyll').write_text('', encoding='utf-8')
     files = ['index.html', 'game.css', 'game-core.js', 'game.js', 'game-moments.js', 'favicon.svg',
              'serve.cjs', 'package.json', 'build.py', 'README.md', 'VERIFICATION.md', 'PLAN.md', 'names.json', 'dustvector.html',
